@@ -1,36 +1,47 @@
-import React, { Component } from 'react'
-import ListContacts from './ListContacts'
+import React, { Component } from 'react';
+import ListContacts from './ListContacts';
+import * as ContactsAPI from './utils/ContactsAPI';
 
 class App extends Component {
   state = {
-    contacts: [
-      {
-        id: 'tyler',
-        name: 'Tyler McGinnis',
-        handle: '@tylermcginnis',
-        avatarURL: 'http://localhost:5001/tyler.jpg'
-      },
-      {
-        id: 'karen',
-        name: 'Karen Isgrigg',
-        handle: '@karen_isgrigg',
-        avatarURL: 'http://localhost:5001/karen.jpg'
-      },
-      {
-        id: 'richard',
-        name: 'Richard Kalehoff',
-        handle: '@richardkalehoff',
-        avatarURL: 'http://localhost:5001/richard.jpg'
-      },
-    ]
+    contacts: []
+  };
+
+  componentDidMount() {
+    ContactsAPI.getAll().then(contacts => {
+      this.setState(() => ({
+        contacts
+      }));
+    });
   }
-  removeContact = (contact) => {
-    this.setState((currentState) => ({
-      contacts: currentState.contacts.filter((c) => {
-        return c.id !== contact.id
+
+  /** >>> Remove contact */
+  /* Udacity: update local state and backend server */
+  removeContact = contact => {
+    this.setState(currentState => ({
+      contacts: currentState.contacts.filter(c => {
+        return c.id !== contact.id;
       })
-    }))
-  }
+    }));
+
+    ContactsAPI.remove(contact);
+  };
+
+  /* RS: remove from backend then fetch all from backend to update local state */
+  updateContactsRS = () => {
+    ContactsAPI.getAll().then(contacts => {
+      this.setState(() => ({
+        contacts
+      }));
+    });
+  };
+
+  removeContactRS = contact => {
+    ContactsAPI.remove(contact).then(this.updateContacts);
+  };
+
+  /*** <<< */
+
   render() {
     return (
       <div>
@@ -39,8 +50,8 @@ class App extends Component {
           onDeleteContact={this.removeContact}
         />
       </div>
-    )
+    );
   }
 }
 
-export default App
+export default App;
