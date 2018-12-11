@@ -40,7 +40,7 @@ class App extends Component {
     ContactsAPI.remove(contact).then(this.updateContacts);
   };
 
-  /*** <<< */
+  /*** <<<  */
 
   render() {
     return (
